@@ -25,9 +25,9 @@ export class Block {
     hash: string = ""
     declare transfer_data: Object
 
-    checkhash(hash: string, previoushash: string, noce: number){
+    checkhash(hash: string, previoushash: string, nonce: number){
         if(hash.startsWith("0".repeat(this.difficulty))){
-            return crypto.createHash("sha256").update(this.soul + this.timestarted + previoushash + noce).digest("hex") == hash;
+            return crypto.createHash("sha256").update(this.soul + this.timestarted + previoushash + nonce).digest("hex") == hash;
         }
         return false;
     }

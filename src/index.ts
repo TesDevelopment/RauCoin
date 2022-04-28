@@ -7,6 +7,8 @@ import { ledger_class } from "./blockchain/ledger"
 
 import { socket_request, Client } from "./general_types"
 
+import { pack } from "jsonpack";
+
 const base = express();
 
 import init_ws = require('express-ws');
@@ -24,13 +26,12 @@ let client_list: Array<Client> = [];
 const ledger = new ledger_class(client_list, __dirname + "/blockchain_backup.json");
 
 app.ws('/v1/chainconnect', function(ws , req) {
-    ws.on('message', function(msg: socket_request) {
-
+    ws.on('message', async function(message: string) {
+        const msg = JSON.parse(message);
         switch (msg.type) {
             case "Init_Connection":
-
                 let soul: string;
-                let taken: boolean;
+                let taken: boolean = true;
                 do {
                     taken = false
                     soul = (Math.random() + 1).toString(36).substring(7);
@@ -42,7 +43,7 @@ app.ws('/v1/chainconnect', function(ws , req) {
                 }while(taken)
 
                 ws.send(JSON.stringify({ 
-                    type: "InitConnection_Response",
+                    type: "Init_Connection_Response",
                     data: {
                         soul: soul
                     }
@@ -58,12 +59,13 @@ app.ws('/v1/chainconnect', function(ws , req) {
 
                 if(!client) return;
 
-                const block = ledger.request_pending_block();
+                const block = await ledger.request_pending_block();
+
 
                 ws.send(JSON.stringify({
                     type: "Block_Response",
                     data: {
-                        block: block.to_json()
+                        block: pack(block.to_json())
                     }
                 }))
 
@@ -112,8 +114,8 @@ app.get("/v1/authtransaction", (req: express.Request, res: express.Response) => 
     const transaction_block = ledger.create_transaction(private_key, receiver, amount);
 
     //Forcing the block to enter a mined state for testing...
-    transaction_block.status = 1;
-    ledger.update_chain(transaction_block);
+    //transaction_block.status = 1;
+    //ledger.update_chain(transaction_block);
 
     return res.json({passed: true, block_soul: transaction_block.soul, block_difficulty: transaction_block.difficulty})
 })
