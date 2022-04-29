@@ -77,7 +77,9 @@ export class ledger_class {
 
         for(const resolve of this.pend_list) {
             resolve(new_block);
+            console.log("PEND SENT")
         }
+        this.pend_list = [];
 
         this.mempool.push(new_block);
         return new_block;

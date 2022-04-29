@@ -25,9 +25,12 @@ export class Block {
     hash: string = ""
     declare transfer_data: Object
 
-    checkhash(hash: string, previoushash: string, nonce: number){
-        if(hash.startsWith("0".repeat(this.difficulty))){
-            return crypto.createHash("sha256").update(this.soul + this.timestarted + previoushash + nonce).digest("hex") == hash;
+    checkhash(hash: string, previous_hash: string, nonce: number){
+        if(hash.startsWith("00000")){
+            console.log("Block found!")
+            console.log(crypto.createHash("sha256").update(this.soul + this.timestarted + previous_hash + nonce).digest("hex"))
+            console.log(hash)
+            return crypto.createHash("sha256").update(this.soul + this.timestarted + previous_hash + nonce).digest("hex") == hash;
         }
         return false;
     }

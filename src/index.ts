@@ -77,11 +77,17 @@ app.ws('/v1/chainconnect', function(ws , req) {
 
                 if(!block_client) return;
 
+                console.log(block_client)
                 const job = block_client.get_job(msg.block.soul);
 
+                console.log(job)
                 if(!job) return;
+                console.log("AFTER")
 
                 if(job.checkhash(msg.hash,msg.previoushash,msg.nonce)){
+                    console.log("WLAJEN")
+                    ledger.mempool.splice(ledger.mempool.indexOf(job),1);
+                    console.log(ledger.mempool)
                     job.complete_check(msg.hash);
                     ledger.update_chain(job)
                 }
