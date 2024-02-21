@@ -1,3 +1,3 @@
 # RauCoin
 
-Decided im going to be working on this and have also decided to open src it because why not ig
+Basic implementation of several cryptology & cryptocurrency principles. Using this as a base is **NOT RECOMMENDED** as it is not feature complete.
